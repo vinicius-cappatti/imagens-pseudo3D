@@ -1,0 +1,15 @@
+.venv/
+.vscode/
+*.gif
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.svg
+*.ico
+*.bmp
+*.tiff
+*.tif
+*.heic
+*.heif
+*.heif-s
