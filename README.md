@@ -1,10 +1,10 @@
 # Estimativa de Profundidade em Imagens 2D para Geração de Efeitos Visuais
 
 ## Autores
-        # - Felipe U. G. de Sousa (RA: 10418415),
-        # - Gustavo N. Siqueira (RA: 10419057),
-        # - Thomaz de S. Scopel (RA: 10417183),
-        # - Vinicius S. Cappatti (RA: 10418266),
+        # - Felipe U. G. de Sousa (RA: 10418415)
+        # - Gustavo N. Siqueira (RA: 10419057)
+        # - Thomaz de S. Scopel (RA: 10417183)
+        # - Vinicius S. Cappatti (RA: 10418266)
 
 ---
 
