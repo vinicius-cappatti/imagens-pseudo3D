@@ -1,4 +1,6 @@
-# Estimativa de Profundidade em Imagens 2D para Geração de Efeitos Visuais
+# Processamento de imagens 2D com efeito pseudo‑3D
+
+Este repositório contém um **notebook Jupyter** (`execucao_final.ipynb`) que demonstra um pipeline simples para gerar **efeito de paralaxe (pseudo‑3D)** a partir de **uma única imagem 2D**, usando um **mapa de “profundidade” sintético** (gerado matematicamente) e a operação de **remapeamento** de pixels (`cv2.remap`, OpenCV).
 
 ## Autores
 - Felipe U. G. de Sousa (RA: 10418415)
@@ -8,129 +10,60 @@
 
 ---
 
-## Introdução
+## Como o repositório está organizado
 
-A geração de efeitos de profundidade a partir de imagens bidimensionais tem se tornado um tema relevante na área de Computação Visual, especialmente com o avanço de técnicas baseadas em aprendizado de máquina. Tradicionalmente, a percepção de profundidade depende de múltiplas imagens ou sensores especializados, como câmeras estéreo ou sensores LiDAR. No entanto, abordagens modernas permitem inferir profundidade a partir de uma única imagem, utilizando modelos de redes neurais profundas.
-
-Esse problema é conhecido como **Monocular Depth Estimation**, e possui diversas aplicações, incluindo realidade aumentada (AR), realidade virtual (VR), efeitos visuais, fotografia computacional (modo retrato) e interfaces interativas.
-
----
-
-## Referencial Teórico
-
-Um dos trabalhos recentes relevantes nessa área é o artigo:
-
-**Generating Spatial Images using Monocular Depth Estimation (2024)**  
-https://cs231n.stanford.edu/2024/papers/generating-spatial-images-using-monocular-depth-estimation.pdf
-
-Esse trabalho propõe um pipeline que combina estimativa de profundidade com técnicas de geração de imagens estereoscópicas, utilizando efeitos como parallax e bokeh para criar sensação de profundidade em imagens 2D :contentReference[oaicite:0]{index=0}.
+- **`execucao_final.ipynb`**: notebook principal (seção teórica + seção prática + interface interativa com sliders).
+- **`requirements.txt`**: dependências Python necessárias para executar o notebook.
+- **`imgs/`**: imagens usadas pelo próprio notebook/README (ex.: figura ilustrativa de DIBR).
 
 ---
 
-## Trabalhos Relacionados
+## Como o notebook funciona (visão geral)
 
-### 1. Monocular Depth Estimation (Fundamentos)
+Na seção prática do notebook, o pipeline segue esta ideia:
 
-Um dos trabalhos clássicos na área é:
-
-**3-D Depth Reconstruction from a Single Still Image**  
-https://www.cs.cornell.edu/~asaxena/learningdepth/ijcv_monocular3dreconstruction.pdf
-
-Esse estudo demonstra que é possível estimar profundidade a partir de uma única imagem utilizando aprendizado supervisionado e modelagem de relações espaciais entre regiões da imagem :contentReference[oaicite:1]{index=1}.
-
-Ele introduz conceitos fundamentais que servem de base para métodos modernos.
+- **Leitura e redimensionamento**: carrega uma imagem (`cv2.imread`) e limita o tamanho para facilitar a interação.
+- **Mapa de profundidade sintético**: como não é estimado por rede neural neste projeto, o notebook cria um mapa “tipo colina” (maior no centro, menor nas bordas) e o converte em deslocamentos máximos em pixels.
+- **Pseudo‑3D via DIBR simplificado**: para cada posição dos sliders (`dx`, `dy`), calcula mapas `mapa_x` e `mapa_y` e aplica `cv2.remap` para produzir a imagem “deslocada”, gerando a sensação de paralaxe.
+- **Interface interativa**: `ipywidgets` cria sliders para controlar o deslocamento e atualizar a imagem em tempo real.
 
 ---
 
-### 2. Survey moderno de Monocular Depth Estimation
+## Como executar o notebook
 
-**Monocular Metric Depth Estimation Survey (2025)**  
-https://arxiv.org/html/2501.11841v1
+### Pré‑requisitos
+- **Python 3.10+** (recomendado)
+- Jupyter Notebook/Lab (o `requirements.txt` já inclui `ipykernel`)
 
-Esse trabalho apresenta um panorama atualizado da área, destacando que modelos modernos utilizam redes neurais profundas para inferir profundidade diretamente de imagens RGB, sem necessidade de sensores adicionais :contentReference[oaicite:2]{index=2}.
+### Passo a passo (Windows / PowerShell)
 
-Além disso, reforça aplicações como:
-- reconstrução 3D
-- navegação autônoma
-- geração de novas visualizações
+1) Crie e ative um ambiente virtual (opcional, mas recomendado):
 
----
+```bash
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
 
-### 3. Pseudo-3D e Parallax
+2) Instale as dependências:
 
-Técnicas de pseudo-3D utilizam mapas de profundidade para simular tridimensionalidade a partir de imagens 2D.
+```bash
+python -m pip install -r requirements.txt
+```
 
-O conceito de **2D + Depth** consiste em associar uma imagem a um mapa de profundidade, permitindo gerar múltiplas visualizações e criar efeito tridimensional :contentReference[oaicite:3]{index=3}.
+3) Inicie o Jupyter:
 
-Além disso, técnicas como **parallax** exploram a variação de perspectiva para criar sensação de profundidade, sendo amplamente utilizadas em animações e visualizações interativas :contentReference[oaicite:4]{index=4}.
+```bash
+jupyter lab
+```
 
----
+4) Abra o arquivo `execucao_final.ipynb` e execute as células **na ordem**.
 
-## Metodologia Proposta
+### Configuração da imagem de entrada (importante)
 
-O projeto segue um pipeline baseado no estado da arte:
+No notebook, a variável `caminho_da_imagem` precisa apontar para uma imagem válida. Para facilitar a execução em qualquer máquina, **prefira usar um caminho relativo**, por exemplo:
 
-### 1. Entrada
-- Imagem RGB (2D)
+```python
+caminho_da_imagem = "inputs/cachorro-gravata.jpg"
+```
 
-### 2. Estimativa de profundidade
-- Uso de modelo pré-treinado de monocular depth estimation
-- Geração de um **depth map**, onde cada pixel representa a distância relativa
-
-### 3. Processamento do depth map
-- Normalização
-- Suavização
-- Ajuste de contraste de profundidade
-
-### 4. Aplicação de efeitos
-
-A partir do depth map, são aplicados:
-
-- Parallax (movimento de câmera simulado)
-- Blur seletivo (bokeh)
-- Pseudo-3D (deslocamento de camadas)
-- Geração de múltiplas perspectivas
-
----
-
-## Aplicações
-
-- Realidade aumentada (AR)
-- Realidade virtual (VR)
-- Fotografia computacional
-- Edição de imagens
-- Interfaces interativas
-- Jogos e animações
-
----
-
-## Considerações Finais
-
-A estimativa de profundidade monocular representa uma solução eficiente e de baixo custo para geração de efeitos tridimensionais a partir de imagens 2D.
-
-Com o avanço de redes neurais profundas, tornou-se possível inferir estrutura espacial de forma convincente, permitindo aplicações práticas em diversos contextos.
-
-Os trabalhos analisados demonstram que a combinação de:
-- depth estimation
-- parallax
-- pseudo-3D
-
-é suficiente para criar experiências visuais imersivas sem necessidade de hardware especializado.
-
----
-
-## Referências
-
-SOIN, Karan et al.  
-*Generating Spatial Images using Monocular Depth Estimation*. Stanford, 2024.  
-https://cs231n.stanford.edu/2024/papers/generating-spatial-images-using-monocular-depth-estimation.pdf  
-
-SAXENA, Ashutosh; CHUNG, Sung; NG, Andrew.  
-*3-D Depth Reconstruction from a Single Still Image*.  
-https://www.cs.cornell.edu/~asaxena/learningdepth/ijcv_monocular3dreconstruction.pdf  
-
-ZHANG, J. et al.  
-*Monocular Metric Depth Estimation Survey*, 2025.  
-https://arxiv.org/html/2501.11841v1  
-
----
+Se você usar caminho absoluto, outras pessoas não conseguirão rodar o notebook sem editar esse valor.
